@@ -35,8 +35,8 @@ export function Header() {
           <Link to="/sobre" className={styles.link}>
             O Projeto
           </Link>
-          <Link to="/admin" className={styles.adminBtn}>
-            Área do Grupo
+          <Link to="/gestao" className={styles.adminBtn}>
+            Gestão
           </Link>
         </nav>
 
