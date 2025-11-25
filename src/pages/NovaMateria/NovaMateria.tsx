@@ -24,6 +24,26 @@ export function NovaMateria() {
     });
   };
 
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+      if (!validTypes.includes(file.type)) {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Formato Inválido',
+          text: 'Por favor, selecione apenas imagens JPG ou PNG.',
+          confirmButtonColor: '#d33'
+        });
+        e.target.value = ""; 
+        setArquivo(null);
+        return;
+      }
+      setArquivo(file);
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -86,8 +106,8 @@ export function NovaMateria() {
             <input 
               className={styles.input} 
               type="file" 
-              accept="image/*" 
-              onChange={(e) => setArquivo(e.target.files ? e.target.files[0] : null)} 
+              accept=".jpg, .jpeg, .png" 
+              onChange={handleFileChange} 
             />
           </div>
 
