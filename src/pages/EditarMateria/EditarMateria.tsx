@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { api } from '../../services/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '../../components/Header/Header';
@@ -16,6 +16,7 @@ export function EditarMateria() {
   
   const [titulo, setTitulo] = useState('');
   const [texto, setTexto] = useState('');
+  const [linkAuxiliar, setLinkAuxiliar] = useState('');
   const [arquivo, setArquivo] = useState<File | null>(null);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export function EditarMateria() {
       .then(response => {
         setTitulo(response.data.titulo);
         setTexto(response.data.texto);
+        setLinkAuxiliar(response.data.linkAuxiliar || '');
       })
       .catch(() => {
         MySwal.fire({
@@ -43,12 +45,37 @@ export function EditarMateria() {
     });
   };
 
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+      if (!validTypes.includes(file.type)) {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Formato Inválido',
+          text: 'Por favor, selecione apenas imagens JPG ou PNG.',
+          confirmButtonColor: '#d33'
+        });
+        e.target.value = ""; 
+        setArquivo(null);
+        return;
+      }
+      setArquivo(file);
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await api.patch(`/materias/${id}`, { titulo, texto });
+      await api.patch(`/materias/${id}`, { 
+        titulo, 
+        texto, 
+        linkAuxiliar 
+      });
+
       if (arquivo) {
         const base64 = await converterBase64(arquivo);
         await api.post('/anexos', {
@@ -100,14 +127,24 @@ export function EditarMateria() {
           </div>
 
           <div className={styles.inputGroup}>
+            <label className={styles.label}>Link da Fonte</label>
+            <input 
+              className={styles.input} 
+              type="url" 
+              value={linkAuxiliar} 
+              onChange={e => setLinkAuxiliar(e.target.value)} 
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
             <label className={styles.label}>
               Substituir Imagem (Opcional)
             </label>
             <input 
               className={styles.fileInput} 
               type="file" 
-              accept="image/*" 
-              onChange={(e) => setArquivo(e.target.files ? e.target.files[0] : null)} 
+              accept=".jpg, .jpeg, .png" 
+              onChange={handleFileChange} 
             />
           </div>
 

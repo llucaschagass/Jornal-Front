@@ -13,6 +13,7 @@ export function NovaMateria() {
   const [loading, setLoading] = useState(false);
   const [titulo, setTitulo] = useState('');
   const [texto, setTexto] = useState('');
+  const [linkAuxiliar, setLinkAuxiliar] = useState('');
   const [arquivo, setArquivo] = useState<File | null>(null);
 
   const converterBase64 = (file: File): Promise<string> => {
@@ -49,7 +50,11 @@ export function NovaMateria() {
     setLoading(true);
 
     try {
-      const resMateria = await api.post('/materias', { titulo, texto });
+      const resMateria = await api.post('/materias', { 
+        titulo, 
+        texto, 
+        linkAuxiliar 
+      });
       const novoId = resMateria.data.id;
 
       if (arquivo && novoId) {
@@ -98,6 +103,16 @@ export function NovaMateria() {
               value={titulo} 
               onChange={e => setTitulo(e.target.value)} 
               required 
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Link da Fonte (Opcional)</label>
+            <input 
+              className={styles.input} 
+              type="url" 
+              value={linkAuxiliar} 
+              onChange={e => setLinkAuxiliar(e.target.value)} 
             />
           </div>
 

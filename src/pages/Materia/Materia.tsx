@@ -13,6 +13,7 @@ interface MateriaDetalhada {
   id: number;
   titulo: string;
   texto: string;
+  linkAuxiliar?: string;
   inseridoEm: string;
   anexos: Anexo[];
 }
@@ -114,6 +115,20 @@ export function Materia() {
             <div className={styles.textBody}>
               {materia.texto}
             </div>
+
+            {materia.linkAuxiliar && (
+              <div style={{ marginTop: '30px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+                <span style={{ fontWeight: 'bold', color: '#666' }}>Fonte: </span>
+                <a 
+                  href={materia.linkAuxiliar} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ color: '#fd6925', textDecoration: 'underline' }}
+                >
+                  {materia.linkAuxiliar}
+                </a>
+              </div>
+            )}
           </div>
         </article>
 
